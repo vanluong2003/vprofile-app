@@ -1,4 +1,6 @@
 # GitOps — Infrastructure & Application Delivery on AWS EKS
+Infrastructure Repo: https://github.com/vanluong2003/infra-eks-vpc
+Application Repo: https://github.com/vanluong2003/vprofile-app
 
 Production-grade GitOps pipeline automating infrastructure provisioning, container image lifecycle, and Kubernetes deployments — all driven by Git.
 
@@ -252,20 +254,5 @@ helm upgrade --install vprostack ./vprochart \
 ```
 
 ---
-
-## Lessons Learned
-
-| Challenge | Solution |
-|-----------|---------|
-| EKS nodes failing to join cluster | Fixed private subnet NAT Gateway routing and K8s subnet tags |
-| Terraform state conflicts | Migrated to S3 backend with DynamoDB locking |
-| Helm upgrade failing on first run | Used `helm upgrade --install` with `--create-namespace` |
-| Trivy scan blocking pipeline | Set `exit-code: 0` for advisory mode while still capturing results |
-
----
-
-## Author
-
-DevOps Engineer focused on building scalable, automated, and secure cloud-native delivery platforms.
 
 **Core skills:** Terraform · Kubernetes · Docker · CI/CD · AWS · GitOps · Helm · IaC · Linux
