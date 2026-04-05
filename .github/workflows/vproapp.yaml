@@ -6,7 +6,7 @@ env:
   ECR_REPOSITORY: vproapp
   CLUSTER_NAME: vprofile-cluster
   HELM_RELEASE_NAME: vprostack
-  HELM_CHART_PATH: ./vprocharts
+  HELM_CHART_PATH: ./vprochart
 jobs:
   Build_artifact_and_Testing:
     runs-on: ubuntu-latest
