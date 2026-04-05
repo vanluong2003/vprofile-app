@@ -67,7 +67,7 @@ jobs:
           repo: ${{ env.ECR_REPOSITORY }}
           tags: latest,${{ github.run_number }}
           daemon_off: false
-          dockerfile: ./app/Dockerfile
+          dockerfile: ./Docker-files/app/Dockerfile
           context: ./
   # Deploy_to_EKS:
   #   runs-on: ubuntu-latest
