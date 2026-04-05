@@ -40,7 +40,7 @@ spec:
             ]
       containers:
         - name: vproapp-container
-          image: ${{ values.image.repository }}:${{ values.image.tag }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           ports:
             - name: vproapp-port
               containerPort: 8080
