@@ -1,0 +1,81 @@
+name: Vproapp CI/CD
+on:
+  workflow_dispatch:
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: vproapp
+  CLUSTER_NAME: vprofile-cluster
+  HELM_RELEASE_NAME: vprostack
+  HELM_CHART_PATH: ./helm/vprocharts
+jobs:
+  Build_artifact_and_Testing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Setup JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: "temurin"
+          java-version: "21"
+      - name: Build artifact
+        run: mvn install -DskipTests
+      # - name: Upload artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: vproapp-war
+      #     path: target/vprofile-v2.war
+      - name: Unit test
+        run: mvn test
+      - name: Checkstyle
+        run: mvn checkstyle:checkstyle
+  Build_docker_image_and_Publish:
+    runs-on: ubuntu-latest
+    needs: Build_artifact_and_Testing
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Build image and Publish ECR
+        uses: appleboy/docker-ecr-action@master
+        with:
+          access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          region: ${{ env.AWS_REGION }}
+          registry: ${{ secrets.AWS_REGISTRY }}
+          repo: ${{ env.ECR_REPOSITORY }}
+          tags: latest,${{ github.run_number }}
+          daemon_off: false
+          dockerfile: ./app/Dockerfile
+          context: ./
+  Deploy_to_EKS:
+    runs-on: ubuntu-latest
+    needs: Build_docker_image_and_Publish
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v6.0.0
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Get Kubeconfig file
+        run: aws eks update-kubeconfig --name ${{ env.CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
+      - name: Print Kubeconfig file
+        run: cat ~/.kube/config
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry: ${{ secrets.AWS_REGISTRY }}
+      - name: Set up Helm
+        uses: azure/setup-helm@v4.2.0
+        with:
+          version: "latest"
+      - name: Deploy application via Helm
+        run: |
+          helm upgrade --install ${{ env.HELM_RELEASE_NAME }} ${{ env.HELM_CHART_PATH }} \
+            --namespace default \
+            --create-namespace \
+            --set image.repository=${{ secrets.AWS_REGISTRY }}/${{ env.ECR_REPOSITORY }} \
+            --set image.tag=${{ github.run_number }}

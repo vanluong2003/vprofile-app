@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vprodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vprodb
+  template:
+    metadata:
+      labels:
+        app: vprodb
+    spec:
+      initContainers:
+        - name: init-db
+          image: busybox
+          volumeMounts:
+            - mountPath: /var/lib/mysql # chưa có sẽ tự động tạo
+              name: db-volume
+          command: ["sh", "-c", "rm -rf /var/lib/mysql/lost+found"]
+      containers:
+        - name: vprodb-container
+          image: vanluong2003/vprodb:v1
+          ports:
+            - name: vprodb-port
+              containerPort: 3306
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: db-volume
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: vprofile-secret
+                  key: db-pass
+      volumes:
+        - name: db-volume
+          persistentVolumeClaim:
+            claimName: db-pvc
