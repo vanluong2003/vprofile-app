@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup JDK
         uses: actions/setup-java@v5
@@ -24,7 +24,7 @@ jobs:
         run: mvn install -DskipTests
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: vproapp-artifact
           path: target/vprofile-v2.war
@@ -46,29 +46,29 @@ jobs:
           output: trivy-results.json
 
       - name: Upload Trivy scan results as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: trivy-scan-results
           path: trivy-results.json
 
-  # Build_docker_image_and_Publish:
-  #   runs-on: ubuntu-latest
-  #   needs: Build_artifact_and_Testing
-  #   steps:
-  #     - name: Checkout source code
-  #       uses: actions/checkout@v4
-  #     - name: Build image and Publish ECR
-  #       uses: appleboy/docker-ecr-action@master
-  #       with:
-  #         access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         region: ${{ env.AWS_REGION }}
-  #         registry: ${{ secrets.AWS_REGISTRY }}
-  #         repo: ${{ env.ECR_REPOSITORY }}
-  #         tags: latest,${{ github.run_number }}
-  #         daemon_off: false
-  #         dockerfile: ./app/Dockerfile
-  #         context: ./
+  Build_docker_image_and_Publish:
+    runs-on: ubuntu-latest
+    needs: Build_artifact_and_Testing
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v5
+      - name: Build image and Publish ECR
+        uses: appleboy/docker-ecr-action@master
+        with:
+          access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          region: ${{ env.AWS_REGION }}
+          registry: ${{ secrets.AWS_REGISTRY }}
+          repo: ${{ env.ECR_REPOSITORY }}
+          tags: latest,${{ github.run_number }}
+          daemon_off: false
+          dockerfile: ./app/Dockerfile
+          context: ./
   # Deploy_to_EKS:
   #   runs-on: ubuntu-latest
   #   needs: Build_docker_image_and_Publish
