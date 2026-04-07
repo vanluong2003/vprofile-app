@@ -1,20 +1,8 @@
 # GitOps — Infrastructure & Application Delivery on AWS EKS
-Infrastructure Repo: https://github.com/vanluong2003/infra-eks-vpc
-Application Repo: https://github.com/vanluong2003/vprofile-app
+- Infrastructure Repo: https://github.com/vanluong2003/infra-eks-vpc
+- Application Repo: https://github.com/vanluong2003/vprofile-app
 
 Production-grade GitOps pipeline automating infrastructure provisioning, container image lifecycle, and Kubernetes deployments — all driven by Git.
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Terraform-7B42BC?style=for-the-badge&logo=terraform&logoColor=white" alt="Terraform"/>
-  <img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white" alt="GitHub Actions"/>
-  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker"/>
-  <img src="https://img.shields.io/badge/Amazon_EKS-FF9900?style=for-the-badge&logo=amazon-eks&logoColor=white" alt="EKS"/>
-  <img src="https://img.shields.io/badge/Helm-0F1689?style=for-the-badge&logo=helm&logoColor=white" alt="Helm"/>
-  <img src="https://img.shields.io/badge/Amazon_ECR-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white" alt="ECR"/>
-  <img src="https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white" alt="Kubernetes"/>
-  <img src="https://img.shields.io/badge/Trivy-1904DA?style=for-the-badge&logo=aqua-security&logoColor=white" alt="Trivy"/>
-</p>
-
 ---
 
 ## Architecture
